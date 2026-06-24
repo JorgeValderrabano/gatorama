@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gatorama — Un juego de miaumoria muy felino</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- Background layers -->
+<div class="bg-layer bg-gradient"></div>
+<div class="bg-layer bg-noise"></div>
+<div class="bg-layer" id="paws-container"></div>
+<div class="vignette"></div>
+
+<!-- Confetti canvas -->
+<canvas id="confetti-canvas"></canvas>
+
+<!-- Streak banner -->
+<div class="streak-banner" id="streak-banner">
+  <div class="streak-text" id="streak-text">¡DOBLE!</div>
+  <div class="streak-sub" id="streak-sub">+200 bonus</div>
+</div>
+
+<main class="relative min-h-screen flex flex-col items-center px-4 py-8 md:py-12">
+
+  <!-- Header -->
+  <header class="text-center mb-8 md:mb-10">
+    <div class="flex items-center justify-center gap-3 mb-3">
+      <div class="divider-line"></div>
+      <span class="text-[0.65rem] tracking-[0.4em] uppercase text-orange-300/70 font-medium">Un juego de miaumoria muy felino</span>
+      <div class="divider-line"></div>
+    </div>
+    <h1 class="display-font font-black text-6xl md:text-8xl leading-none tracking-tight select-none">
+      <span class="title-letter">G</span><span class="title-letter">a</span><span class="title-letter">t</span><span class="title-letter">o</span><span class="title-letter">r</span><span class="title-letter">a</span><span class="title-letter">m</span><span class="title-letter">a</span>
+    </h1>
+    <p class="mt-4 text-stone-400 text-sm md:text-base max-w-md mx-auto font-light">
+      Pon a prueba tu miaumoria. Empareja a los amigos felinos para despejar el tablero.
+    </p>
+  </header>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-4 gap-2 md:gap-3 mb-6 md:mb-8 w-full max-w-2xl">
+    <div class="stat-card rounded-xl px-2 py-3 md:px-3 md:py-4 text-center">
+      <div class="stat-label">Movimientos</div>
+      <div class="stat-value text-3xl md:text-4xl mt-1.5" id="moves">0</div>
+    </div>
+    <div class="stat-card rounded-xl px-2 py-3 md:px-3 md:py-4 text-center">
+      <div class="stat-label">Parejas</div>
+      <div class="stat-value text-3xl md:text-4xl mt-1.5"><span id="matches">0</span><span class="text-stone-500 text-xl md:text-2xl">/8</span></div>
+    </div>
+    <div class="stat-card rounded-xl px-2 py-3 md:px-3 md:py-4 text-center">
+      <div class="stat-label">Racha</div>
+      <div class="stat-value text-3xl md:text-4xl mt-1.5 flex items-center justify-center">
+        <span id="streak">0</span>
+        <span class="streak-flame" id="streak-flame" aria-label="streak active">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/>
+          </svg>
+        </span>
+      </div>
+    </div>
+    <div class="stat-card rounded-xl px-2 py-3 md:px-3 md:py-4 text-center">
+      <div class="stat-label">Tiempo</div>
+      <div class="stat-value text-3xl md:text-4xl mt-1.5" id="time">0:00</div>
+    </div>
+  </div>
+
+  <!-- Card grid -->
+  <div class="card-grid" id="card-grid"></div>
+
+  <!-- Controls -->
+  <div class="mt-8 md:mt-10 flex items-center gap-3">
+    <button class="btn-primary" id="restart-btn">Juego Nuevo</button>
+    <button class="btn-icon" id="sound-btn" aria-label="Toggle sound">
+      <svg id="sound-on-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+      </svg>
+      <svg id="sound-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <line x1="23" y1="9" x2="17" y2="15"></line>
+        <line x1="17" y1="9" x2="23" y2="15"></line>
+      </svg>
+    </button>
+  </div>
+
+  <!-- How to play -->
+  <details class="mt-8 max-w-md text-center">
+    <summary class="cursor-pointer text-stone-400 hover:text-orange-300 transition text-sm font-medium tracking-wide">Cómo jugar</summary>
+    <div class="mt-4 text-stone-400 text-sm space-y-2 text-left bg-white/[0.03] rounded-xl p-4 border border-white/5">
+      <p><span class="text-orange-300 font-semibold">·</span> Haz clic en dos cartas para darles la vuelta. </p>
+      <p><span class="text-orange-300 font-semibold">·</span> Combina un par para que se alejen flotando con un tintineo.</p>
+      <p><span class="text-orange-300 font-semibold">·</span> Si fallas y las cartas se sacuden y vuelven a su sitio.</p>
+      <p><span class="text-orange-300 font-semibold">·</span> Acumula rachas para obtener bonificaciones por combo.</p>
+      <p><span class="text-orange-300 font-semibold">·</span> Despeja el tablero rápidamente para obtener una calificación de 3 estrellas.</p>
+    </div>
+  </details>
+
+</main>
+
+<!-- Win modal -->
+<div class="modal-overlay" id="win-modal">
+  <div class="modal">
+    <div class="text-[0.65rem] tracking-[0.4em] uppercase text-orange-300/70 mb-3 font-medium">Tablero completo</div>
+    <h2 class="display-font font-black italic text-5xl md:text-6xl mb-6" id="win-title" style="background: linear-gradient(135deg, var(--gold), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Purr-fect!</h2>
+    <div class="flex justify-center mb-6" id="stars-container"></div>
+    <p class="text-stone-400 text-sm mb-6" id="win-message">¡Encontraste todos los gatitos!</p>
+    <div class="grid grid-cols-3 gap-3 mb-8 border-y border-white/5 py-5">
+      <div>
+        <div class="stat-label">Movimientos</div>
+        <div class="display-font text-2xl font-bold text-amber-300 mt-1" id="final-moves">0</div>
+      </div>
+      <div>
+        <div class="stat-label">Tiempo</div>
+        <div class="display-font text-2xl font-bold text-amber-300 mt-1" id="final-time">0:00</div>
+      </div>
+      <div>
+        <div class="stat-label">Mejor racha</div>
+        <div class="display-font text-2xl font-bold text-amber-300 mt-1" id="final-streak">0</div>
+      </div>
+    </div>
+    <button class="btn-primary" id="play-again-btn">Jugar de nuevo</button>
+  </div>
+</div>
+
+<!-- Scripts (order matters: dependencies load first) -->
+<script src="js/cats.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/confetti.js"></script>
+<script src="js/game.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
