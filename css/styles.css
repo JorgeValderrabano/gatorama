@@ -603,6 +603,43 @@ body {
   width: 48px;
 }
 
+/* ============ RESPONSIVE — MOBILE (< 540px) ============ */
+@media (max-width: 540px) {
+  /* Title scales down so 8 letters fit comfortably on narrow screens */
+  .display-font.title {
+    font-size: clamp(2.75rem, 14vw, 3.75rem);
+    letter-spacing: -0.02em;
+  }
+
+  /* Eyebrow text: tighten letter-spacing so it fits on one line */
+  .header-row .eyebrow {
+    letter-spacing: 0.2em;
+    font-size: 0.55rem;
+  }
+
+  /* Hide the decorative dividers on the header row to reclaim space */
+  .header-row .divider-line {
+    display: none;
+  }
+
+  /* Stats become a 2×2 grid instead of a cramped 4-across row */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  /* Trim modal padding so the win dialog fits small screens */
+  .modal {
+    padding: 28px 20px;
+  }
+
+  .modal .star {
+    width: 40px;
+    height: 40px;
+    margin: 0 2px;
+  }
+}
+
 /* How to play */
 details summary { list-style: none; }
 details summary::-webkit-details-marker { display: none; }
