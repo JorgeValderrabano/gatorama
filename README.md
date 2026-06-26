@@ -111,6 +111,27 @@ Then open <http://localhost:8000> in your browser.
 
 ---
 
+## 📱 How to Install Gatorama (PWA)
+Gatorama is a Progressive Web App (PWA). You can install it directly on your device for a native, full-screen experience without going through an app store.
+
+For iOS (iPhone/iPad)
+- Open Safari and navigate to the website. (Note: This only works in Safari).
+- Tap the Share icon at the bottom of the screen (the square with an upward arrow).
+- Scroll down the menu and tap Add to Home Screen.
+- Confirm the name and tap Add in the top right corner.
+
+For Android
+- Open Google Chrome and navigate to the website.
+- Tap the three-dot menu icon in the top right corner.
+- Select Install app or Add to Home screen from the menu.
+- Confirm the installation on the pop-up prompt.
+
+For Windows / macOS (Desktop)
+- Open Google Chrome or Microsoft Edge and navigate to the website.
+- Look at the right side of the address bar (URL bar).
+- Click the Install icon (usually a monitor with a downward arrow or a plus sign).
+- Click Install on the confirmation prompt. The app will be added to your desktop or start menu.
+
 ## 📝 Notes
 
 - The UI text is in **Spanish**.
