@@ -189,8 +189,8 @@ function showStreakBanner(streak) {
   const sub = document.getElementById('streak-sub');
 
   const messages = {
-    2: 'DOUBLE!', 3: 'TRIPLE!', 4: 'QUAD!', 5: 'PURR-FECT!',
-    6: 'MEGA STREAK!', 7: 'UNSTOPPABLE!', 8: 'LEGENDARY!'
+    2: 'DOBLE!', 3: 'TRIPLE!', 4: 'CUADRUPLE!', 5: 'PURR-FECTO!',
+    6: 'MEGA RACHA!', 7: 'IMPARABLE!', 8: 'LEGENDARIO!'
   };
   const msg = messages[Math.min(streak, 8)] || `${streak}× COMBO!`;
   text.textContent = msg;
@@ -260,12 +260,12 @@ function onWin() {
   }
 
   // Title + message
-  const titles = ['Nice Try!', 'Good Work!', 'Purr-fect!', 'Purr-fect!'];
+  const titles = ['Buen intento!', 'Buen trabajo!', 'Purr-fecto!', 'Purr-fecto!'];
   const messages = [
-    'The kitties appreciate your effort.',
-    'You matched all the kitties!',
-    'A masterful display of feline memory!',
-    'A masterful display of feline memory!'
+    'Los gatitos aprecian tu esfuerzo.',
+    'Encontraste a todos los gatitos!',
+    'Una muestra maestra de memoria felina!',
+    'Una muestra maestra de memoria felina!'
   ];
   document.getElementById('win-title').textContent = titles[stars];
   document.getElementById('win-message').textContent = messages[stars];
