@@ -21,6 +21,7 @@
     });
   }
 </script>
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192x192.png">
 <link rel="apple-touch-icon" href="/icon-192x192.png">
 </head>
 <body>
@@ -139,6 +140,32 @@
       </div>
     </div>
     <button class="btn-primary" id="play-again-btn">Jugar de nuevo</button>
+  </div>
+</div>
+
+<!-- Timeout modal -->
+<div class="modal-overlay" id="timeout-modal">
+  <div class="modal">
+    <div class="text-[0.65rem] tracking-[0.4em] uppercase text-orange-300/70 mb-3 font-medium">Se acabó el tiempo</div>
+    <h2 class="display-font font-black italic text-5xl md:text-6xl mb-6" style="background: linear-gradient(135deg, var(--rose), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Tiempo fuera!</h2>
+    <div class="mb-6">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto; opacity: 0.7;">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+    </div>
+    <p class="text-stone-400 text-sm mb-6">Los gatitos se quedaron esperando... Inténtalo de nuevo!</p>
+    <div class="grid grid-cols-2 gap-3 mb-8 border-y border-white/5 py-5">
+      <div>
+        <div class="stat-label">Parejas encontradas</div>
+        <div class="display-font text-2xl font-bold text-amber-300 mt-1" id="timeout-matches">0</div>
+      </div>
+      <div>
+        <div class="stat-label">Mejor racha</div>
+        <div class="display-font text-2xl font-bold text-amber-300 mt-1" id="timeout-streak">0</div>
+      </div>
+    </div>
+    <button class="btn-primary" id="timeout-play-again-btn">Jugar de nuevo</button>
   </div>
 </div>
 

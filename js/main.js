@@ -52,11 +52,17 @@ function createPawPrints() {
 // =====================================================================
 document.getElementById('restart-btn').addEventListener('click', () => {
   document.getElementById('win-modal').classList.remove('show');
+  document.getElementById('timeout-modal').classList.remove('show');
   setTimeout(initGame, 200);
 });
 
 document.getElementById('play-again-btn').addEventListener('click', () => {
   document.getElementById('win-modal').classList.remove('show');
+  setTimeout(initGame, 300);
+});
+
+document.getElementById('timeout-play-again-btn').addEventListener('click', () => {
+  document.getElementById('timeout-modal').classList.remove('show');
   setTimeout(initGame, 300);
 });
 

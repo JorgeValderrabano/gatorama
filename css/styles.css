@@ -387,6 +387,33 @@ body {
   font-weight: 500;
 }
 
+/* Timer warning colors */
+.stat-value.time-warning {
+  background: linear-gradient(135deg, var(--gold), var(--rose));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: pulse-warning 1s ease-in-out infinite;
+}
+
+.stat-value.time-critical {
+  background: linear-gradient(135deg, var(--rose), #ff2d55);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: pulse-critical 0.5s ease-in-out infinite;
+}
+
+@keyframes pulse-warning {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes pulse-critical {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.1); }
+}
+
 .streak-flame {
   display: inline-flex;
   align-items: center;

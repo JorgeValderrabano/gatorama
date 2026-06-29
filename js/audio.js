@@ -157,6 +157,68 @@ class AudioEngine {
     }, noteCount * 80);
   }
 
+  // Timeout song — plays the "miau miau miau miau" mp3 at a low volume
+  playTimeoutSong() {
+    this.init();
+    if (this.muted) return;
+    if (!this._timeoutSong) {
+      this._timeoutSong = new Audio('audio/miau-miau-miau-miau.mp3');
+      this._timeoutSong.loop = false;
+      this._timeoutSong.volume = 0.2;  // low volume so it doesn't bother
+    }
+    this._timeoutSong.currentTime = 0;
+    this._timeoutSong.muted = this.muted;
+    try {
+      this._timeoutSong.play();
+    } catch (err) {
+      // Autoplay may be blocked; ignore
+    }
+  }
+
+  stopTimeoutSong() {
+    if (this._timeoutSong) {
+      this._timeoutSong.pause();
+      this._timeoutSong.currentTime = 0;
+    }
+  }
+
+  // Timeout sound — descending "wah-wah" with a flat ending
+  playTimeout() {
+    this.init();
+    if (this.muted) return;
+    const now = this.ctx.currentTime;
+
+    // Low descending tone
+    const osc = this.ctx.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(300, now);
+    osc.frequency.exponentialRampToValueAtTime(60, now + 1.2);
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(800, now);
+    filter.frequency.exponentialRampToValueAtTime(200, now + 1.2);
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.3, now + 0.05);
+    gain.gain.linearRampToValueAtTime(0.2, now + 0.6);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+    osc.connect(filter).connect(gain).connect(this.sfxGain);
+    osc.start(now);
+    osc.stop(now + 1.6);
+
+    // Final flat "buzz"
+    const osc2 = this.ctx.createOscillator();
+    osc2.type = 'square';
+    osc2.frequency.value = 55;
+    const gain2 = this.ctx.createGain();
+    gain2.gain.setValueAtTime(0, now + 1.3);
+    gain2.gain.linearRampToValueAtTime(0.12, now + 1.45);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 2.2);
+    osc2.connect(gain2).connect(this.sfxGain);
+    osc2.start(now + 1.3);
+    osc2.stop(now + 2.3);
+  }
+
   // Victory fanfare
   playWin() {
     this.init();

@@ -12,7 +12,10 @@ const state = {
   endTime: null,
   locked: false,
   timerInterval: null,
-  started: false
+  started: false,
+  timeLimit: 90,                 // 1 minute 30 seconds
+  timeRemaining: 90,             // current countdown remaining
+  gameOver: false                // true when time runs out
 };
 
 const audio = new AudioEngine();
@@ -31,10 +34,18 @@ function initGame() {
   state.endTime = null;
   state.locked = false;
   state.started = false;
+  state.timeRemaining = state.timeLimit;
+  state.gameOver = false;
   if (state.timerInterval) {
     clearInterval(state.timerInterval);
     state.timerInterval = null;
   }
+
+  // Stop any lingering timeout song from a previous game
+  audio.stopTimeoutSong();
+
+  // Hide time-out modal if visible
+  document.getElementById('timeout-modal')?.classList.remove('show');
 
   // 8 cats × 2 = 16 cards
   const indices = [];
@@ -48,7 +59,27 @@ function initGame() {
 
   renderBoard();
   updateStats();
-  document.getElementById('time').textContent = '0:00';
+  updateTimerDisplay(state.timeLimit);
+  document.getElementById('time').classList.remove('time-warning', 'time-critical');
+
+  // Show all cards face up for 2 seconds at the start
+  showAllCardsBriefly();
+}
+
+function showAllCardsBriefly() {
+  // Lock clicks during the preview
+  state.locked = true;
+  // Flip all cards face up
+  document.querySelectorAll('.card-container').forEach(card => {
+    card.classList.add('flipped');
+  });
+  // After 2 seconds, flip them back and unlock
+  setTimeout(() => {
+    document.querySelectorAll('.card-container').forEach(card => {
+      card.classList.remove('flipped');
+    });
+    state.locked = false;
+  }, 2000);
 }
 
 function renderBoard() {
@@ -81,6 +112,7 @@ function handleCardClick(index) {
   if (state.matched.has(index)) return;
   if (state.flipped.includes(index)) return;
   if (state.flipped.length >= 2) return;
+  if (state.gameOver) return;           // no clicks after timeout
 
   // Start game on first click
   if (!state.started) {
@@ -211,12 +243,55 @@ function updateStats() {
   else flame.classList.remove('active');
 }
 
-function updateTimer() {
-  if (!state.startTime) return;
-  const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
-  const mins = Math.floor(elapsed / 60);
-  const secs = elapsed % 60;
+function updateTimerDisplay(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
   document.getElementById('time').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function updateTimer() {
+  if (!state.started || state.gameOver) return;
+
+  state.timeRemaining--;
+
+  // Update display
+  updateTimerDisplay(state.timeRemaining);
+
+  // Warning colors
+  const timeEl = document.getElementById('time');
+  timeEl.classList.remove('time-warning', 'time-critical');
+  if (state.timeRemaining <= 15) {
+    timeEl.classList.add('time-critical');
+  } else if (state.timeRemaining <= 30) {
+    timeEl.classList.add('time-warning');
+  }
+
+  // Time-out!
+  if (state.timeRemaining <= 0) {
+    onTimeout();
+  }
+}
+
+function onTimeout() {
+  state.gameOver = true;
+  state.endTime = Date.now();
+
+  if (state.timerInterval) {
+    clearInterval(state.timerInterval);
+    state.timerInterval = null;
+  }
+
+  audio.stopMusic();
+  audio.playTimeoutSong();
+
+  // Populate timeout modal
+  document.getElementById('timeout-matches').textContent = state.matched.size / 2;
+  document.getElementById('timeout-streak').textContent = state.maxStreak;
+
+  // Show timeout modal
+  setTimeout(() => {
+    document.getElementById('timeout-modal').classList.add('show');
+  }, 600);
 }
 
 function onWin() {
@@ -234,7 +309,7 @@ function onWin() {
   if (moves <= 12) stars = 3;
   else if (moves <= 18) stars = 2;
 
-  const elapsed = Math.floor((state.endTime - state.startTime) / 1000);
+  const elapsed = state.timeLimit - state.timeRemaining;
   const mins = Math.floor(elapsed / 60);
   const secs = elapsed % 60;
   const timeStr = `${mins}:${secs.toString().padStart(2, '0')}`;
